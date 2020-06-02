@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
   schedule:
-    - cron:  '*/30 * * * *'
+    - cron: '*/30 * * * *'
 env:
   GITHUB_PAGES_PATH: http://itinao.github.io/web-performance-monitor
 jobs:
@@ -17,29 +17,32 @@ jobs:
         run: sudo npm i -g lighthouse
       - name: Run lighthouse
         run: |
-          current_date=`TZ='Asia/Tokyo' date +%Y%m%d_%H%M%S`
-          echo ::set-env name=CURRENT_DATE::$(echo $current_date)
-          mkdir -p ./public/${current_date}
+          current_day=`TZ='Asia/Tokyo' date +%Y%m%d`
+          current_datetime=`TZ='Asia/Tokyo' date +%H%M%S`
+          save_dir=./public/${current_day}/${current_datetime}
+          echo ::set-env name=CURRENT_DAY::$(echo $current_day)
+          echo ::set-env name=CURRENT_DATETIME::$(echo $current_datetime)
+          mkdir -p ${save_dir}
           lighthouse \
             --chrome-flags="--headless" \
             --output html \
             --emulated-form-factor desktop \
             --throttling-method provided \
-            --output-path ./public/${current_date}/top_report.html \
+            --output-path ${save_dir}/top_report.html \
             ${{ secrets.PAGE1 }}
           lighthouse \
             --chrome-flags="--headless" \
             --output html \
             --emulated-form-factor desktop \
             --throttling-method provided \
-            --output-path ./public/${current_date}/search_report.html \
+            --output-path ${save_dir}/search_report.html \
             ${{ secrets.PAGE2 }}
           lighthouse \
             --chrome-flags="--headless" \
             --output html \
             --emulated-form-factor desktop \
             --throttling-method provided \
-            --output-path ./public/${current_date}/item_report.html \
+            --output-path ${save_dir}/item_report.html \
             ${{ secrets.PAGE3 }}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -53,7 +56,7 @@ jobs:
         env:
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "URLはこっち！↓ \n ■ TOPページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/top_report.html \n ■ 検索ページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/search_report.html \n ■ 商品ページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/item_report.html"
+          SLACK_MESSAGE: "URLはこっち！↓ \n ■ TOPページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DAY }}/${{ env.CURRENT_DATETIME }}/top_report.html \n ■ 検索ページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DAY }}/${{ env.CURRENT_DATETIME }}/search_report.html \n ■ 商品ページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DAY }}/${{ env.CURRENT_DATETIME }}/item_report.html"
           SLACK_TITLE: 計測結果だよ！
           SLACK_USERNAME: 計測くん
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
