@@ -51,7 +51,7 @@ jobs:
         env:
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "URLはこっち！↓ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/top_report.html \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/searchreport.html \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/item_report.html"
+          SLACK_MESSAGE: "URLはこっち！↓ \n ■ TOPページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/top_report.html \n ■ 検索ページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/search_report.html \n ■ 商品ページ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/item_report.html"
           SLACK_TITLE: 計測結果だよ！
           SLACK_USERNAME: 計測くん
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
