@@ -1,9 +1,11 @@
-name: Run Monitor
+name: Run Monitoring Scheduler
 on:
   pull_request:
     types: [opened, synchronize, edited]
     branches:
       - 'master'
+  schedule:
+    - cron:  '*/15 * * * *'
 env:
   GITHUB_PAGES_PATH: http://itinao.github.io/web-performance-monitor
 jobs:
