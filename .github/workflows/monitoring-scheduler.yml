@@ -5,7 +5,7 @@ on:
     branches:
       - 'master'
   schedule:
-    - cron: '*/1 * * * *'
+    - cron: '*/ * * * *'
 env:
   GITHUB_PAGES_PATH: http://itinao.github.io/web-performance-monitor
 jobs:
