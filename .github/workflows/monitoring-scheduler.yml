@@ -1,4 +1,4 @@
-name: Run Monitoring Scheduler
+name: Monitoring Scheduler
 on:
   pull_request:
     types: [opened, synchronize, edited]
