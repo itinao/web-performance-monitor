@@ -4,6 +4,8 @@ on:
     types: [opened, synchronize, edited]
     branches:
       - 'master'
+env:
+  GITHUB_PAGES_PATH: http://itinao.github.io/web-performance-monitor
 jobs:
   lighthouse:
     name: runner / lighthouse
@@ -13,28 +15,29 @@ jobs:
         run: sudo npm i -g lighthouse
       - name: Run lighthouse
         run: |
-          echo ::set-env name=CURRENT_DATE::$(TZ='Asia/Tokyo' date +%Y%m%d_%H%M%S)
+          current_date=`TZ='Asia/Tokyo' date +%Y%m%d_%H%M%S`
+          echo ::set-env name=CURRENT_DATE::$(echo $current_date)
           mkdir -p ./public/${current_date}
           lighthouse \
             --chrome-flags="--headless" \
             --output html \
             --emulated-form-factor desktop \
             --throttling-method provided \
-            --output-path ./public/${{ env.CURRENT_DATE }}/top_report.html \
+            --output-path ./public/${current_date}/top_report.html \
             ${{ secrets.PAGE1 }}
           lighthouse \
             --chrome-flags="--headless" \
             --output html \
             --emulated-form-factor desktop \
             --throttling-method provided \
-            --output-path ./public/${{ env.CURRENT_DATE }}/search_report.html \
+            --output-path ./public/${current_date}/search_report.html \
             ${{ secrets.PAGE2 }}
           lighthouse \
             --chrome-flags="--headless" \
             --output html \
             --emulated-form-factor desktop \
             --throttling-method provided \
-            --output-path ./public/${{ env.CURRENT_DATE }}/item_report.html \
+            --output-path ./public/${current_date}/item_report.html \
             ${{ secrets.PAGE3 }}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -48,11 +51,7 @@ jobs:
         env:
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: \
-            URLはこっち！↓ \
-            http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/top_report.html
-            http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/searchreport.html
-            http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/item_report.html
+          SLACK_MESSAGE: "URLはこっち！↓ \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/top_report.html \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/searchreport.html \n ${{ env.GITHUB_PAGES_PATH }}/${{ env.CURRENT_DATE }}/item_report.html"
           SLACK_TITLE: 計測結果だよ！
           SLACK_USERNAME: 計測くん
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
