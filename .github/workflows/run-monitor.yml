@@ -14,7 +14,7 @@ jobs:
       - name: Run lighthouse
         run: |
           echo ::set-env name=CURRENT_DATE::$(TZ='Asia/Tokyo' date +%Y%m%d_%H%M%S)
-          mkdir -p ./public/${current_date}
+          mkdir -p ./public/${{ env.CURRENT_DATE }}
           lighthouse \
             --chrome-flags="--headless" \
             --output html \
@@ -48,10 +48,10 @@ jobs:
         env:
           SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: \
-            URLはこっち！↓ \
-            http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/top_report.html
-            http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/searchreport.html
+          SLACK_MESSAGE: \n
+            URLはこっち！↓ \n
+            http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/top_report.html \n
+            http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/searchreport.html \n
             http://itinao.github.io/web-performance-monitor/${{ env.CURRENT_DATE }}/item_report.html
           SLACK_TITLE: 計測結果だよ！
           SLACK_USERNAME: 計測くん
