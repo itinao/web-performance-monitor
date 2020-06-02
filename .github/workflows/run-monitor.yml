@@ -1,0 +1,54 @@
+name: Run Monitor
+on:
+  pull_request:
+    types: [opened, synchronize, edited]
+    branches:
+      - 'master'
+jobs:
+  lighthouse:
+    name: runner / lighthouse
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install lighthouse
+        run: sudo npm i -g lighthouse
+      - name: Run lighthouse
+        run: |
+          current_date=`TZ='Asia/Tokyo' date +%Y%m%d_%H%M%S`
+          mkdir -p ./public/${current_date}
+          lighthouse \
+            --chrome-flags="--headless" \
+            --output html \
+            --emulated-form-factor desktop \
+            --throttling-method provided \
+            --output-path ./public/${current_date}/top_report.html \
+            ${{ secrets.PAGE1 }}
+          lighthouse \
+            --chrome-flags="--headless" \
+            --output html \
+            --emulated-form-factor desktop \
+            --throttling-method provided \
+            --output-path ./public/${current_date}/search_report.html \
+            ${{ secrets.PAGE2 }}
+          lighthouse \
+            --chrome-flags="--headless" \
+            --output html \
+            --emulated-form-factor desktop \
+            --throttling-method provided \
+            --output-path ./public/${current_date}/item_report.html \
+            ${{ secrets.PAGE3 }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          keep_files: true
+      - name: Slack Notification
+        if: always()
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: URLはこっち！⇒ ほげほげ
+          SLACK_TITLE: 計測結果だよ！
+          SLACK_USERNAME: 計測くん
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
